@@ -54,7 +54,19 @@ protected:
 
 	void EndSprint();
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
 	bool bIsSprinting;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_StartSprinting();
+	bool Server_StartSprinting_Validate();
+	void Server_StartSprinting_Implementation();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_EndSprinting();
+	bool Server_EndSprinting_Validate();
+	void Server_EndSprinting_Implementation();
+
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float DefaultWalkSpeed = 175;
@@ -67,15 +79,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
-
-
-	// ----- Base States -----
-
-	FTimerHandle SprintingTimerHandle;
-
-	void StartStateTimers();
-
-	void HandleSprinting();
 
 
 public:	

@@ -30,7 +30,6 @@ ASCharacter::ASCharacter()
 
 	//Add Components
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
-	PlayerStateComponent = CreateDefaultSubobject<USPlayerStateComponent>(TEXT("PlayerStateComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -45,8 +44,6 @@ ASCharacter::ASCharacter()
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = DefaultCrouchSpeed;
-
-	bIsSprinting = false;
 	
 }
 
@@ -55,9 +52,8 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	StartStateTimers();
 }
+
 	
 
 
@@ -70,20 +66,19 @@ void ASCharacter::Tick(float DeltaTime)
 
 }
 
+void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps) const
+{
+
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASCharacter, bIsSprinting);
+
+
+}
+
 
 //  ------------- States -------------
 
-void ASCharacter::StartStateTimers()
-{
-	
-	if (PlayerStateComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Could not find USPlayerStateComponent on ASCharacter")); return; }
-
-		float StaminaDecayInterval;
-		StaminaDecayInterval = PlayerStateComponent->GetSprintStaminaDecrementInterval();
-
-		GetWorld()->GetTimerManager().SetTimer(SprintingTimerHandle, this, &ASCharacter::HandleSprinting, StaminaDecayInterval, true);
-
-}
 
 
 // ------------- Movement -------------
@@ -146,43 +141,67 @@ void ASCharacter::EndCrouch()
 
 }
 
+
+
+
 void ASCharacter::StartSprint()
 {
-	
-	if (PlayerStateComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Could not find USPlayerStateComponent on ASCharacter")); return; }
+	// no need to do anything if we are already sprinting
+	if (bIsSprinting == true) { return; }
 
-	if (PlayerStateComponent->GetStamina() >= 10.f) //TODO REFACTOR Sprinting Stam Stats into Character
-	{
-		bIsSprinting = true;
-		PlayerStateComponent->ControlStaminaRegenTimer(false);
+	
+	if(GetLocalRole() < ROLE_Authority)
+	{ 
+		Server_StartSprinting();
 		GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
+	}
+	else
+	{
+		if (bIsSprinting == false)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
+			bIsSprinting = true;
+		}
 	}
 }
 
 void ASCharacter::EndSprint()
 {
-	if (PlayerStateComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Could not find USPlayerStateComponent on ASCharacter")); return; }
 
-	bIsSprinting = false;
-	PlayerStateComponent->ControlStaminaRegenTimer(true);
-	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
-
-}
-
-void ASCharacter::HandleSprinting()
-{
-	if (PlayerStateComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Could not find USPlayerStateComponent on ASCharacter")); return; }
-
-	if (bIsSprinting)
+	if (GetLocalRole() < ROLE_Authority)
 	{
-		PlayerStateComponent->LowerStamina(PlayerStateComponent->GetSprintStaminaDecrementValue());
-
-		if (PlayerStateComponent->GetStamina() <= 10.f) //TODO change this to a variable
+		Server_EndSprinting();
+		GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+	}
+	else
+	{
+		if (bIsSprinting == true)
 		{
-			EndSprint();
+			GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+			bIsSprinting = false;
 		}
 	}
-
-
 }
+
+bool ASCharacter::Server_StartSprinting_Validate()
+{
+	return true;
+}
+
+void ASCharacter::Server_StartSprinting_Implementation()
+{
+	StartSprint();
+}
+
+bool ASCharacter::Server_EndSprinting_Validate()
+{
+	return true;
+}
+
+void ASCharacter::Server_EndSprinting_Implementation()
+{
+	EndSprint();
+}
+
+
 
