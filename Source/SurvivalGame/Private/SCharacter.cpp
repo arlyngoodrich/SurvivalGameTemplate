@@ -10,6 +10,7 @@
 
 #include "SHealthComponent.h"
 #include "SPlayerStateComponent.h"
+#include "Components/StaminaComponent.h"
 
 #include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
@@ -30,6 +31,7 @@ ASCharacter::ASCharacter()
 
 	//Add Components
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
+	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -52,11 +54,10 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitializePlayerStats();
+
 }
-
-	
-
-
 
 
 // Called every frame
@@ -72,12 +73,32 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASCharacter, bIsSprinting);
-
-
 }
 
 
 //  ------------- States -------------
+
+void ASCharacter::InitializePlayerStats()
+{
+	if (StaminaComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("NO STAMINA COMPONENT!")); return; }
+
+	GetWorld()->GetTimerManager().SetTimer(PlayerStatsUpdateTimerHandle, this, &ASCharacter::UpdatePlayerStats, 1.f, true);
+
+}
+
+void ASCharacter::UpdatePlayerStats()
+{
+	CheckStamina();
+}
+
+void ASCharacter::CheckStamina()
+{
+	// If sprinting but not enough stam, end sprint
+	if (bIsSprinting == true && StaminaComponent->GetCurrentStamina() <= MinStamToSprint)
+	{
+		EndSprint();
+	}
+}
 
 
 
@@ -146,20 +167,28 @@ void ASCharacter::EndCrouch()
 
 void ASCharacter::StartSprint()
 {
+	// if not enough stam, don't sprint
+	if (StaminaComponent->GetCurrentStamina() <= MinStamToSprint) { return; }
+
 	// no need to do anything if we are already sprinting
 	if (bIsSprinting == true) { return; }
 
 	
 	if(GetLocalRole() < ROLE_Authority)
 	{ 
+		//If Client
 		Server_StartSprinting();
 		GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
 	}
 	else
 	{
+		
 		if (bIsSprinting == false)
 		{
+			//If Server
 			GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
+			StaminaComponent->ControlStaminaRegen(false);
+			StaminaComponent->StartStaminaDecay(SprintStamDecayRate);
 			bIsSprinting = true;
 		}
 	}
@@ -170,14 +199,19 @@ void ASCharacter::EndSprint()
 
 	if (GetLocalRole() < ROLE_Authority)
 	{
+		//If Client
 		Server_EndSprinting();
 		GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 	}
 	else
 	{
+		
 		if (bIsSprinting == true)
 		{
+			//If Server
 			GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+			StaminaComponent->ControlStaminaRegen(true);
+			StaminaComponent->StopStaminaDecay();
 			bIsSprinting = false;
 		}
 	}

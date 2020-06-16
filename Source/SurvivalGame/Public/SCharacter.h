@@ -9,7 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class USHealthComponent;
-class USPlayerStateComponent;
+class UStaminaComponent;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -20,9 +20,17 @@ public:
 	// Sets default values for this character's properties
 	ASCharacter();
 
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void AddControllerYawInput(float Val) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	// ----- Components -----
 
@@ -37,8 +45,7 @@ protected:
 	USHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USPlayerStateComponent* PlayerStateComponent;
-
+	UStaminaComponent* StaminaComponent;
 
 	// ----- Movement Functions -----
 	
@@ -77,17 +84,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float DefaultCrouchSpeed = 150;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float MinStamToSprint = 10;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float SprintStamDecayRate = .1;
+
+
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
 
+	// ----- Player Stats -----
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	FTimerHandle PlayerStatsUpdateTimerHandle;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void InitializePlayerStats();
 
-	virtual void AddControllerYawInput(float Val) override;
+	void UpdatePlayerStats();
+
+	void CheckStamina();
 
 };
