@@ -26,6 +26,12 @@ public:
 
 	virtual void AddControllerYawInput(float Val) override;
 
+	bool GetWantsToSprint();
+
+	float GetSprintSpeedModifier();
+
+	float GetDefaultWalkSpeed();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -65,7 +71,7 @@ protected:
 	virtual void Jump() override;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
-	bool bIsSprinting;
+	bool bWantsToSprint;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_StartSprinting();
@@ -82,7 +88,7 @@ protected:
 	float DefaultWalkSpeed = 175;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float DefaultRunSpeed = 600;
+	float SprintSpeedMuliplyer = 3;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float DefaultCrouchSpeed = 150;
@@ -101,17 +107,5 @@ protected:
 
 	// ----- Player Stats -----
 
-	FTimerHandle PlayerStatsUpdateTimerHandle;
-
-	void InitializePlayerStats();
-
-	void UpdatePlayerStats();
-
-	void CheckStamina();
-
-	void UpdateStatCheckFrequency(float CheckFrequency);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float DefaultStatUpdateFrequency = 1.f;
 
 };

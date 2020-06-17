@@ -60,9 +60,6 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	InitializePlayerStats();
-
 }
 
 
@@ -78,45 +75,17 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASCharacter, bIsSprinting);
+	DOREPLIFETIME(ASCharacter, bWantsToSprint);
 }
 
 
-//  ------------- States -------------
+//  ------------- Public Getters -------------
 
-void ASCharacter::InitializePlayerStats()
-{
-	if (StaminaComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("NO STAMINA COMPONENT!")); return; }
+bool ASCharacter::GetWantsToSprint() { return bWantsToSprint; }
 
-	GetWorld()->GetTimerManager().SetTimer(PlayerStatsUpdateTimerHandle, this, &ASCharacter::UpdatePlayerStats, 1.f, true);
-}
+float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
 
-void ASCharacter::UpdatePlayerStats()
-{
-	CheckStamina();
-}
-
-void ASCharacter::CheckStamina()
-{
-	// If sprinting but not enough stam, end sprint
-	if (bIsSprinting == true && StaminaComponent->GetCurrentStamina() <= MinStamToSprint)
-	{
-
-	}
-	else
-	{
-
-	}
-}
-
-void ASCharacter::UpdateStatCheckFrequency(float CheckFrequency)
-{
-	GetWorld()->GetTimerManager().ClearTimer(PlayerStatsUpdateTimerHandle);
-	GetWorld()->GetTimerManager().SetTimer(PlayerStatsUpdateTimerHandle, this, &ASCharacter::UpdatePlayerStats, CheckFrequency, true);
-}
-
-
-
+float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
 
 
 // ------------- Movement -------------
@@ -152,6 +121,7 @@ void ASCharacter::AddControllerYawInput(float Val)
 	YawInput = Val;
 
 }
+
 
 //Forward and Backward
 void ASCharacter::MoveForward(float Value)
@@ -194,33 +164,28 @@ void ASCharacter::StartSprint()
 	
 	if (StaminaComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Character could not find stamina component")); return; }
 
-
-		if (GetLocalRole() < ROLE_Authority)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Client Start Sprinting"))
-			Server_StartSprinting();
-		}
-		else
-		{
-			GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
-		}
-
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		Server_StartSprinting();
+	}
+	else
+	{
+		bWantsToSprint = true;
+	}
 }
 
 void ASCharacter::EndSprint()
 {
 	if (StaminaComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Character could not find stamina component")); return; }
 
-
-		if (GetLocalRole() < ROLE_Authority)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Client Stop Sprinting"))
-			Server_EndSprinting();
-		}
-		else
-		{
-			GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
-		}
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		Server_EndSprinting();
+	}
+	else
+	{
+		bWantsToSprint = false;
+	}
 
 }
 
@@ -231,7 +196,6 @@ bool ASCharacter::Server_StartSprinting_Validate()
 
 void ASCharacter::Server_StartSprinting_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Server Start Sprinting"));
 	StartSprint();
 }
 
@@ -242,7 +206,6 @@ bool ASCharacter::Server_EndSprinting_Validate()
 
 void ASCharacter::Server_EndSprinting_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Server Stop Sprinting"));
 	EndSprint();
 }
 
