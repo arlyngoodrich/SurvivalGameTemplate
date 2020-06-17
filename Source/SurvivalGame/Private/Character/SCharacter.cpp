@@ -1,28 +1,35 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SCharacter.h"
+#include "SurvivalGame/Public/Character/SCharacter.h"
+#include "SurvivalGame/SurvivalGame.h"
+
+//UE4 Includes
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-
-#include "SHealthComponent.h"
-#include "SPlayerStateComponent.h"
-
 #include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
+//Custom components
+#include "Components/SHealthComponent.h"
+#include "Components/SStaminaComponent.h"
+#include "Components/SCharacterMovementComponent.h"
 
-#include "..\Public\SCharacter.h"
 
- 
 
-// Sets default values
-ASCharacter::ASCharacter()
+
+ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
+
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
+
+
+	// Sets default values
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetReplicates(true);
@@ -30,6 +37,7 @@ ASCharacter::ASCharacter()
 
 	//Add Components
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
+	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -44,7 +52,7 @@ ASCharacter::ASCharacter()
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = DefaultCrouchSpeed;
-	
+
 }
 
 
@@ -53,10 +61,6 @@ void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 }
-
-	
-
-
 
 
 // Called every frame
@@ -71,17 +75,39 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ASCharacter, bWantsToSprint);
 	DOREPLIFETIME(ASCharacter, bIsSprinting);
 
-
+	
 }
 
 
-//  ------------- States -------------
+//  ------------- Public Getters -------------
 
+bool ASCharacter::GetWantsToSprint()
+{
+	if (StaminaComponent->GetCurrentStamina() > MinStamToSprint && bWantsToSprint)
+	{return true;} else {return false;}
+}
+
+
+void ASCharacter::SetIsSprinting(bool IsSprinting) {bIsSprinting = IsSprinting;}
+
+float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
+
+float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
 
 
 // ------------- Movement -------------
+
+
+//  ---- Public Movement Functions
+
+void ASCharacter::InteruptSprint()
+{
+	EndSprint();
+}
+
 
 
 // Called to bind functionality to input
@@ -100,7 +126,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, & ASCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::EndSprint);
@@ -112,8 +138,10 @@ void ASCharacter::AddControllerYawInput(float Val)
 	Super::AddControllerYawInput(Val);
 
 	YawInput = Val;
-
 }
+
+
+// ---- Protected Movement Functions
 
 //Forward and Backward
 void ASCharacter::MoveForward(float Value)
@@ -131,6 +159,7 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::BeginCrouch()
 {
 	Crouch();
+	UE_LOG(LogDevelopment, Log, TEXT("Crouch"));
 
 }
 
@@ -138,49 +167,55 @@ void ASCharacter::BeginCrouch()
 void ASCharacter::EndCrouch()
 {
 	UnCrouch();
+	UE_LOG(LogDevelopment, Log, TEXT("UnCrouch"));
 
 }
 
+void ASCharacter::Jump()
+{
+	//check if there is enough stam to jump, will remove and then trigger jump if true
+	if (StaminaComponent->RequestOneTimeStaminaDrain(StaminaRequiredToJump) == true)
+	{
+		Super::Jump();
+		UE_LOG(LogDevelopment, Log, TEXT("Jump"));
+	}
 
+	UE_LOG(LogDevelopment, Log, TEXT("Jump denied"));
+}
 
 
 void ASCharacter::StartSprint()
 {
-	// no need to do anything if we are already sprinting
-	if (bIsSprinting == true) { return; }
-
 	
-	if(GetLocalRole() < ROLE_Authority)
-	{ 
+	if (StaminaComponent == nullptr) { UE_LOG(LogDevelopment, Error, TEXT("Character could not find stamina component")); return; }
+
+	if (GetLocalRole() < ROLE_Authority)
+	{
 		Server_StartSprinting();
-		GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
 	}
 	else
 	{
-		if (bIsSprinting == false)
-		{
-			GetCharacterMovement()->MaxWalkSpeed = DefaultRunSpeed;
-			bIsSprinting = true;
-		}
+		StaminaComponent->RequestStartStaminaDecay(SprintStamDecayRate);
+		bWantsToSprint = true;
+		UE_LOG(LogDevelopment, Log, TEXT("Start Sprinting"));
 	}
 }
 
 void ASCharacter::EndSprint()
 {
+	if (StaminaComponent == nullptr) { UE_LOG(LogDevelopment, Error, TEXT("Character could not find stamina component")); return; }
 
 	if (GetLocalRole() < ROLE_Authority)
 	{
 		Server_EndSprinting();
-		GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 	}
 	else
 	{
-		if (bIsSprinting == true)
-		{
-			GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
-			bIsSprinting = false;
-		}
+		StaminaComponent->RequestStopStaminaDecay();
+		bWantsToSprint = false;
+		UE_LOG(LogDevelopment, Log, TEXT("End Sprinting"));
 	}
+
 }
 
 bool ASCharacter::Server_StartSprinting_Validate()
@@ -202,6 +237,7 @@ void ASCharacter::Server_EndSprinting_Implementation()
 {
 	EndSprint();
 }
+
 
 
 
