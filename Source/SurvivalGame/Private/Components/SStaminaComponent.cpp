@@ -9,12 +9,12 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 
-#include "Components/StaminaComponent.h"
+#include "Components/SStaminaComponent.h"
 
 
 
 // Sets default values for this component's properties
-UStaminaComponent::UStaminaComponent()
+USStaminaComponent::USStaminaComponent()
 {
 	SetIsReplicated(true);
 	MaxStamina = 100;
@@ -26,7 +26,7 @@ UStaminaComponent::UStaminaComponent()
 
 
 // Called when the game starts
-void UStaminaComponent::BeginPlay()
+void USStaminaComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -34,23 +34,23 @@ void UStaminaComponent::BeginPlay()
 	
 }
 
-float UStaminaComponent::GetCurrentStamina() {return CurrentStamina;}
+float USStaminaComponent::GetCurrentStamina() {return CurrentStamina;}
 
 
-void UStaminaComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps) const
+void USStaminaComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps) const
 {
 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UStaminaComponent, MaxStamina);
-	DOREPLIFETIME(UStaminaComponent, CurrentStamina);
-	DOREPLIFETIME(UStaminaComponent, StaminaRegenFrequency);
+	DOREPLIFETIME(USStaminaComponent, MaxStamina);
+	DOREPLIFETIME(USStaminaComponent, CurrentStamina);
+	DOREPLIFETIME(USStaminaComponent, StaminaRegenFrequency);
 	
 }
 
 
 
-void UStaminaComponent::RaiseStamina()
+void USStaminaComponent::RaiseStamina()
 {
 
 	if (CurrentStamina < MaxStamina)
@@ -62,7 +62,7 @@ void UStaminaComponent::RaiseStamina()
 
 }
 
-void UStaminaComponent::LowerStamina()
+void USStaminaComponent::LowerStamina()
 {
 	
 	if (CurrentStamina > 0)
@@ -74,13 +74,13 @@ void UStaminaComponent::LowerStamina()
 }
 
 //Automatically starts on the server since called on begin play
-void UStaminaComponent::StartStaminaRegen()
+void USStaminaComponent::StartStaminaRegen()
 {
 
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaRegenTimerHandle) == false)
 	{
 		//Create Timer
-		GetWorld()->GetTimerManager().SetTimer(StaminaRegenTimerHandle, this, &UStaminaComponent::RaiseStamina, StaminaRegenFrequency, true);
+		GetWorld()->GetTimerManager().SetTimer(StaminaRegenTimerHandle, this, &USStaminaComponent::RaiseStamina, StaminaRegenFrequency, true);
 	}
 	else if (GetWorld()->GetTimerManager().IsTimerPaused(StaminaRegenTimerHandle) == true)
 	{
@@ -95,7 +95,7 @@ void UStaminaComponent::StartStaminaRegen()
 
 }
 
-void UStaminaComponent::StopStaminaRegen()
+void USStaminaComponent::StopStaminaRegen()
 {
 	// if timer exists and is not paused
 		
@@ -107,19 +107,19 @@ void UStaminaComponent::StopStaminaRegen()
 
 
 
-bool UStaminaComponent::Server_OneTimeLowerStamina_Validate(float StaminaToDrain)
+bool USStaminaComponent::Server_OneTimeLowerStamina_Validate(float StaminaToDrain)
 {
 	return true;
 }
 
-void UStaminaComponent::Server_OneTimeLowerStamina_Implementation(float StaminaToDrain)
+void USStaminaComponent::Server_OneTimeLowerStamina_Implementation(float StaminaToDrain)
 {
 
 	CurrentStamina = CurrentStamina - StaminaToDrain;
 
 }
 
-bool UStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
+bool USStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 {
 	if (CurrentStamina >= StaminaDrain)
 	{
@@ -133,7 +133,7 @@ bool UStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 
 
 
-void UStaminaComponent::ControlStaminaRegen(bool StaminaShouldRegen)
+void USStaminaComponent::ControlStaminaRegen(bool StaminaShouldRegen)
 {
 	
 
@@ -148,7 +148,7 @@ void UStaminaComponent::ControlStaminaRegen(bool StaminaShouldRegen)
 
 }
 
-void UStaminaComponent::RequestStartStaminaDecay(float StaminaDecayRate)
+void USStaminaComponent::RequestStartStaminaDecay(float StaminaDecayRate)
 {
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == true)
 	{
@@ -156,11 +156,11 @@ void UStaminaComponent::RequestStartStaminaDecay(float StaminaDecayRate)
 	}
 
 	ControlStaminaRegen(false);
-	GetWorld()->GetTimerManager().SetTimer(StaminaDecayTimerHandle, this, &UStaminaComponent::LowerStamina, StaminaDecayRate, true);
+	GetWorld()->GetTimerManager().SetTimer(StaminaDecayTimerHandle, this, &USStaminaComponent::LowerStamina, StaminaDecayRate, true);
 
 }
 
-void UStaminaComponent::RequestStopStaminaDecay()
+void USStaminaComponent::RequestStopStaminaDecay()
 {
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == true)
 	{

@@ -9,7 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class USHealthComponent;
-class UStaminaComponent;
+class USStaminaComponent;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -54,7 +54,7 @@ protected:
 	USHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UStaminaComponent* StaminaComponent;
+	USStaminaComponent* StaminaComponent;
 
 public:
 	// ----- Public Movement Functions -----

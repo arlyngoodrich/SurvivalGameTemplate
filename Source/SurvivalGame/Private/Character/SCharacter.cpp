@@ -1,25 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SCharacter.h"
+#include "SurvivalGame/Public/Character/SCharacter.h"
 #include "SurvivalGame/SurvivalGame.h"
 
+//UE4 Includes
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-
-#include "SHealthComponent.h"
-#include "SPlayerStateComponent.h"
-#include "Components/StaminaComponent.h"
-#include "Components/SCharacterMovementComponent.h"
-
 #include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
+//Custom components
+#include "Components/SHealthComponent.h"
+#include "Components/SStaminaComponent.h"
+#include "Components/SCharacterMovementComponent.h"
 
-#include "..\Public\SCharacter.h"
 
 
 
@@ -39,7 +37,7 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 
 	//Add Components
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
-	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
+	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));

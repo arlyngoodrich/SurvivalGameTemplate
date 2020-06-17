@@ -4,7 +4,7 @@
 #include "SurvivalGame/SurvivalGame.h"
 
 #include "Components/SCharacterMovementComponent.h"
-#include "SCharacter.h"
+#include "Character/SCharacter.h"
 
 
 

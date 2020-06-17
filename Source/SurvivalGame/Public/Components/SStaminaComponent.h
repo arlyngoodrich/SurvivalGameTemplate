@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "StaminaComponent.generated.h"
+#include "SStaminaComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SURVIVALGAME_API UStaminaComponent : public UActorComponent
+class SURVIVALGAME_API USStaminaComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UStaminaComponent();
+	USStaminaComponent();
 
 protected:
 	// Called when the game starts
