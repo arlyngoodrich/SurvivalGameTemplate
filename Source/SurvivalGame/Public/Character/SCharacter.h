@@ -9,7 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class USHealthComponent;
-class USPlayerStateComponent;
+class USStaminaComponent;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -17,12 +17,29 @@ class SURVIVALGAME_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+
 	// Sets default values for this character's properties
-	ASCharacter();
+	ASCharacter(const class FObjectInitializer& ObjectInitializer);
+	
+
+
+	// ----- Public Getters/Setters -----
+	
+	bool GetWantsToSprint();
+
+	void SetIsSprinting(bool IsSprinting);
+
+	float GetSprintSpeedModifier();
+
+	float GetDefaultWalkSpeed();
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	// ----- Components -----
 
@@ -37,10 +54,20 @@ protected:
 	USHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USPlayerStateComponent* PlayerStateComponent;
+	USStaminaComponent* StaminaComponent;
 
+public:
+	// ----- Public Movement Functions -----
 
-	// ----- Movement Functions -----
+	void InteruptSprint();
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void AddControllerYawInput(float Val) override;
+
+protected:
+	// ----- Protected Movement Functions -----
 	
 	void MoveForward(float Value);
 
@@ -53,6 +80,11 @@ protected:
 	void StartSprint();
 
 	void EndSprint();
+
+	virtual void Jump() override;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
+	bool bWantsToSprint;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
 	bool bIsSprinting;
@@ -72,22 +104,24 @@ protected:
 	float DefaultWalkSpeed = 175;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-	float DefaultRunSpeed = 600;
+	float SprintSpeedMuliplyer = 3;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float DefaultCrouchSpeed = 150;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float MinStamToSprint = 10;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float SprintStamDecayRate = .1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float StaminaRequiredToJump = 10;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
 
+	// ----- Player Stats -----
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual void AddControllerYawInput(float Val) override;
 
 };
