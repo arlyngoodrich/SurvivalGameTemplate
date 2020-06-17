@@ -2,6 +2,8 @@
 
 
 #include "SCharacter.h"
+#include "SurvivalGame/SurvivalGame.h"
+
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -76,12 +78,22 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASCharacter, bWantsToSprint);
+	DOREPLIFETIME(ASCharacter, bIsSprinting);
+
+	
 }
 
 
 //  ------------- Public Getters -------------
 
-bool ASCharacter::GetWantsToSprint() { return bWantsToSprint; }
+bool ASCharacter::GetWantsToSprint()
+{
+	if (StaminaComponent->GetCurrentStamina() > MinStamToSprint && bWantsToSprint)
+	{return true;} else {return false;}
+}
+
+
+void ASCharacter::SetIsSprinting(bool IsSprinting) {bIsSprinting = IsSprinting;}
 
 float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
 
@@ -89,6 +101,15 @@ float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
 
 
 // ------------- Movement -------------
+
+
+//  ---- Public Movement Functions
+
+void ASCharacter::InteruptSprint()
+{
+	EndSprint();
+}
+
 
 
 // Called to bind functionality to input
@@ -119,9 +140,10 @@ void ASCharacter::AddControllerYawInput(float Val)
 	Super::AddControllerYawInput(Val);
 
 	YawInput = Val;
-
 }
 
+
+// ---- Protected Movement Functions
 
 //Forward and Backward
 void ASCharacter::MoveForward(float Value)
@@ -139,6 +161,7 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::BeginCrouch()
 {
 	Crouch();
+	UE_LOG(LogDevelopment, Log, TEXT("Crouch"));
 
 }
 
@@ -146,6 +169,7 @@ void ASCharacter::BeginCrouch()
 void ASCharacter::EndCrouch()
 {
 	UnCrouch();
+	UE_LOG(LogDevelopment, Log, TEXT("UnCrouch"));
 
 }
 
@@ -155,14 +179,17 @@ void ASCharacter::Jump()
 	if (StaminaComponent->RequestOneTimeStaminaDrain(StaminaRequiredToJump) == true)
 	{
 		Super::Jump();
+		UE_LOG(LogDevelopment, Log, TEXT("Jump"));
 	}
+
+	UE_LOG(LogDevelopment, Log, TEXT("Jump denied"));
 }
 
 
 void ASCharacter::StartSprint()
 {
 	
-	if (StaminaComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Character could not find stamina component")); return; }
+	if (StaminaComponent == nullptr) { UE_LOG(LogDevelopment, Error, TEXT("Character could not find stamina component")); return; }
 
 	if (GetLocalRole() < ROLE_Authority)
 	{
@@ -170,13 +197,15 @@ void ASCharacter::StartSprint()
 	}
 	else
 	{
+		StaminaComponent->RequestStartStaminaDecay(SprintStamDecayRate);
 		bWantsToSprint = true;
+		UE_LOG(LogDevelopment, Log, TEXT("Start Sprinting"));
 	}
 }
 
 void ASCharacter::EndSprint()
 {
-	if (StaminaComponent == nullptr) { UE_LOG(LogTemp, Warning, TEXT("Character could not find stamina component")); return; }
+	if (StaminaComponent == nullptr) { UE_LOG(LogDevelopment, Error, TEXT("Character could not find stamina component")); return; }
 
 	if (GetLocalRole() < ROLE_Authority)
 	{
@@ -184,7 +213,9 @@ void ASCharacter::EndSprint()
 	}
 	else
 	{
+		StaminaComponent->RequestStopStaminaDecay();
 		bWantsToSprint = false;
+		UE_LOG(LogDevelopment, Log, TEXT("End Sprinting"));
 	}
 
 }

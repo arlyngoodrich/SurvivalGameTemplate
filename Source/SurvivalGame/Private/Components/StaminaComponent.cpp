@@ -3,6 +3,8 @@
 
 
 
+#include "SurvivalGame/SurvivalGame.h"
+
 #include "Engine/Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
@@ -55,7 +57,7 @@ void UStaminaComponent::RaiseStamina()
 	{
 		CurrentStamina++;
 		
-		//UE_LOG(LogTemp, Warning, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
+		//UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}
 
 }
@@ -67,9 +69,8 @@ void UStaminaComponent::LowerStamina()
 	{
 		CurrentStamina--;
 
-		//UE_LOG(LogTemp, Warning, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
+		//UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}
-
 }
 
 //Automatically starts on the server since called on begin play
@@ -149,10 +150,14 @@ void UStaminaComponent::ControlStaminaRegen(bool StaminaShouldRegen)
 
 void UStaminaComponent::RequestStartStaminaDecay(float StaminaDecayRate)
 {
-	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == false)
+	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == true)
 	{
-		GetWorld()->GetTimerManager().SetTimer(StaminaDecayTimerHandle, this, &UStaminaComponent::LowerStamina, StaminaDecayRate, true);
+		(GetWorld()->GetTimerManager().ClearTimer(StaminaDecayTimerHandle));
 	}
+
+	ControlStaminaRegen(false);
+	GetWorld()->GetTimerManager().SetTimer(StaminaDecayTimerHandle, this, &UStaminaComponent::LowerStamina, StaminaDecayRate, true);
+
 }
 
 void UStaminaComponent::RequestStopStaminaDecay()
@@ -160,6 +165,7 @@ void UStaminaComponent::RequestStopStaminaDecay()
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == true)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(StaminaDecayTimerHandle);
+		ControlStaminaRegen(true);
 	}
 
 }

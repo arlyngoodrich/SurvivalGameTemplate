@@ -21,16 +21,18 @@ public:
 	// Sets default values for this character's properties
 	ASCharacter(const class FObjectInitializer& ObjectInitializer);
 	
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void AddControllerYawInput(float Val) override;
 
+	// ----- Public Getters/Setters -----
+	
 	bool GetWantsToSprint();
+
+	void SetIsSprinting(bool IsSprinting);
 
 	float GetSprintSpeedModifier();
 
 	float GetDefaultWalkSpeed();
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -54,7 +56,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaminaComponent* StaminaComponent;
 
-	// ----- Movement Functions -----
+public:
+	// ----- Public Movement Functions -----
+
+	void InteruptSprint();
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void AddControllerYawInput(float Val) override;
+
+protected:
+	// ----- Protected Movement Functions -----
 	
 	void MoveForward(float Value);
 
@@ -72,6 +85,9 @@ protected:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
 	bool bWantsToSprint;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
+	bool bIsSprinting;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_StartSprinting();
