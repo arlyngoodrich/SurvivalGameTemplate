@@ -27,6 +27,7 @@ public:
 
 protected:
 
+	
 	UPROPERTY(Replicated, EditDefaultsOnly, Category = "Stamina")
 	float MaxStamina;
 
@@ -49,12 +50,19 @@ protected:
 
 	void StopStaminaRegen();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_OneTimeLowerStamina(float StaminaToDrain);
+	bool Server_OneTimeLowerStamina_Validate(float StaminaToDrain);
+	void Server_OneTimeLowerStamina_Implementation(float StaminaToDrain);
+
 public:
+
+	bool RequestOneTimeStaminaDrain(float StaminaDrain);
 
 	void ControlStaminaRegen(bool StaminaShouldRegen);
 
-	void StartStaminaDecay(float StaminaDecayRate);
+	void RequestStartStaminaDecay(float StaminaDecayRate);
 
-	void StopStaminaDecay();
+	void RequestStopStaminaDecay();
 
 };

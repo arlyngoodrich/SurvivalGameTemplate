@@ -17,9 +17,10 @@ class SURVIVALGAME_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	ASCharacter();
 
+	// Sets default values for this character's properties
+	ASCharacter(const class FObjectInitializer& ObjectInitializer);
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -61,6 +62,8 @@ protected:
 
 	void EndSprint();
 
+	virtual void Jump() override;
+
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
 	bool bIsSprinting;
 
@@ -90,6 +93,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float SprintStamDecayRate = .1;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float StaminaRequiredToJump = 10;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
@@ -103,5 +108,10 @@ protected:
 	void UpdatePlayerStats();
 
 	void CheckStamina();
+
+	void UpdateStatCheckFrequency(float CheckFrequency);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+	float DefaultStatUpdateFrequency = 1.f;
 
 };

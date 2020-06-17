@@ -48,29 +48,31 @@ void UStaminaComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& O
 
 void UStaminaComponent::RaiseStamina()
 {
-	
+
 	if (CurrentStamina < MaxStamina)
 	{
 		CurrentStamina++;
-
-		UE_LOG(LogTemp, Warning, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
+		
+		//UE_LOG(LogTemp, Warning, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}
+
 }
 
 void UStaminaComponent::LowerStamina()
 {
+	
 	if (CurrentStamina > 0)
 	{
 		CurrentStamina--;
 
-		UE_LOG(LogTemp, Warning, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
+		//UE_LOG(LogTemp, Warning, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}
 
 }
 
+//Automatically starts on the server since called on begin play
 void UStaminaComponent::StartStaminaRegen()
 {
-
 
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaRegenTimerHandle) == false)
 	{
@@ -86,13 +88,14 @@ void UStaminaComponent::StartStaminaRegen()
 	{
 		// no idea wtf is happening if it gets here...
 		UE_LOG(LogTemp, Warning, TEXT("Unexpected outcome in StartStaminaComponent StartRegenTimer function"));
-
 	}
+
 }
 
 void UStaminaComponent::StopStaminaRegen()
 {
 	// if timer exists and is not paused
+		
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaRegenTimerHandle) == true && (GetWorld()->GetTimerManager().IsTimerPaused(StaminaRegenTimerHandle) == false))
 	{
 		GetWorld()->GetTimerManager().PauseTimer(StaminaRegenTimerHandle);
@@ -101,8 +104,36 @@ void UStaminaComponent::StopStaminaRegen()
 
 
 
+bool UStaminaComponent::Server_OneTimeLowerStamina_Validate(float StaminaToDrain)
+{
+	return true;
+}
+
+void UStaminaComponent::Server_OneTimeLowerStamina_Implementation(float StaminaToDrain)
+{
+
+	CurrentStamina = CurrentStamina - StaminaToDrain;
+
+}
+
+bool UStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
+{
+	if (CurrentStamina >= StaminaDrain)
+	{
+		Server_OneTimeLowerStamina(StaminaDrain);
+		return true;
+	}
+	
+	
+	return false;
+}
+
+
+
 void UStaminaComponent::ControlStaminaRegen(bool StaminaShouldRegen)
 {
+	
+
 	if (StaminaShouldRegen == true)
 	{
 		StartStaminaRegen();
@@ -114,7 +145,7 @@ void UStaminaComponent::ControlStaminaRegen(bool StaminaShouldRegen)
 
 }
 
-void UStaminaComponent::StartStaminaDecay(float StaminaDecayRate)
+void UStaminaComponent::RequestStartStaminaDecay(float StaminaDecayRate)
 {
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == false)
 	{
@@ -122,7 +153,7 @@ void UStaminaComponent::StartStaminaDecay(float StaminaDecayRate)
 	}
 }
 
-void UStaminaComponent::StopStaminaDecay()
+void UStaminaComponent::RequestStopStaminaDecay()
 {
 	if (GetWorld()->GetTimerManager().TimerExists(StaminaDecayTimerHandle) == true)
 	{
@@ -130,4 +161,6 @@ void UStaminaComponent::StopStaminaDecay()
 	}
 
 }
+
+
 
