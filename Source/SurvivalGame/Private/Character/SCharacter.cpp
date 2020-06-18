@@ -98,7 +98,6 @@ float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
 
 float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
 
-
 // ------------- Movement -------------
 
 

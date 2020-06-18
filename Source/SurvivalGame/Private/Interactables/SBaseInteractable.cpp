@@ -31,7 +31,7 @@ void ASBaseInteractable::OnFocus()
 
 void ASBaseInteractable::OnLostFocus()
 {
-	UE_LOG(LogDevelopment, Log, TEXT("%s has focus"), *StaticClass()->GetFName().ToString());
+	UE_LOG(LogDevelopment, Log, TEXT("%s has lost focus"), *StaticClass()->GetFName().ToString());
 }
 
 

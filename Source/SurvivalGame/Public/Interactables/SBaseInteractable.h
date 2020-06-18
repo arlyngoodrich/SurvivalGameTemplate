@@ -17,6 +17,12 @@ public:
 	// Sets default values for this actor's properties
 	ASBaseInteractable();
 
+	void OnInteract();
+
+	void OnFocus();
+
+	void OnLostFocus();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,9 +30,5 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* BaseStaticMesh;
 
-	void OnInteract();
 
-	void OnFocus();
-
-	void OnLostFocus();
 };
