@@ -2,26 +2,37 @@
 
 
 #include "Interactables/SBaseInteractable.h"
+#include "SurvivalGame/SurvivalGame.h"
+
+// UE4 Includes
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ASBaseInteractable::ASBaseInteractable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	BaseStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseStaticMesh"));
 }
 
 // Called when the game starts or when spawned
 void ASBaseInteractable::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ASBaseInteractable::Tick(float DeltaTime)
+void ASBaseInteractable::OnInteract()
 {
-	Super::Tick(DeltaTime);
-
+	UE_LOG(LogDevelopment, Log, TEXT("%s interacted with"), *StaticClass()->GetFName().ToString());
 }
+
+void ASBaseInteractable::OnFocus()
+{
+	UE_LOG(LogDevelopment, Log, TEXT("%s has focus"), *StaticClass()->GetFName().ToString());
+}
+
+void ASBaseInteractable::OnLostFocus()
+{
+	UE_LOG(LogDevelopment, Log, TEXT("%s has focus"), *StaticClass()->GetFName().ToString());
+}
+
+
 

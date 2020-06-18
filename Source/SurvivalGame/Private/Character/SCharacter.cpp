@@ -43,7 +43,8 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
-
+	SpringArmComp->bEnableCameraLag = true;
+	SpringArmComp->bEnableCameraRotationLag = true;
 
 	//Add Camera Component
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -86,10 +87,10 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 
 bool ASCharacter::GetWantsToSprint()
 {
+	if (!StaminaComponent) { return false; }
 	if (StaminaComponent->GetCurrentStamina() > MinStamToSprint && bWantsToSprint)
 	{return true;} else {return false;}
 }
-
 
 void ASCharacter::SetIsSprinting(bool IsSprinting) {bIsSprinting = IsSprinting;}
 

@@ -21,13 +21,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-
-protected:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UStaticMeshComponent* StaminaComponent;
+	UStaticMeshComponent* BaseStaticMesh;
+
+	void OnInteract();
+
+	void OnFocus();
+
+	void OnLostFocus();
 };
