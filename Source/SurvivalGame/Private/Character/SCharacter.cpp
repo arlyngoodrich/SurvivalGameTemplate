@@ -13,10 +13,12 @@
 #include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
-//Custom components
+//Custom Includes
 #include "Components/SHealthComponent.h"
 #include "Components/SStaminaComponent.h"
 #include "Components/SCharacterMovementComponent.h"
+#include "Components/SPlayerInteractionComponent.h"
+#include "Interactables/SBaseInteractable.h"
 
 
 
@@ -38,12 +40,14 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 	//Add Components
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
+	InteractionComponent = CreateDefaultSubobject<USPlayerInteractionComponent>(TEXT("InteractionComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
-
+	SpringArmComp->bEnableCameraLag = true;
+	SpringArmComp->bEnableCameraRotationLag = true;
 
 	//Add Camera Component
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -86,17 +90,16 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 
 bool ASCharacter::GetWantsToSprint()
 {
+	if (!StaminaComponent) { return false; }
 	if (StaminaComponent->GetCurrentStamina() > MinStamToSprint && bWantsToSprint)
 	{return true;} else {return false;}
 }
-
 
 void ASCharacter::SetIsSprinting(bool IsSprinting) {bIsSprinting = IsSprinting;}
 
 float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
 
 float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
-
 
 // ------------- Movement -------------
 
@@ -131,6 +134,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, & ASCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::EndSprint);
 
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCharacter::TriggerInteract);
 }
 
 void ASCharacter::AddControllerYawInput(float Val)
@@ -236,6 +240,39 @@ bool ASCharacter::Server_EndSprinting_Validate()
 void ASCharacter::Server_EndSprinting_Implementation()
 {
 	EndSprint();
+}
+
+// ----- Player Interaction -----
+
+void ASCharacter::TriggerInteract()
+{
+	if (InteractionComponent->GetIsInteractableInView() == false) { return; }
+	Interact(InteractionComponent->GetInteractableInView());
+}
+
+void ASCharacter::Interact(ASBaseInteractable* Interactable)
+{
+	//If no interactable in view, don't do anything
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		Server_Interact(Interactable);
+	}
+	else
+	{
+		UE_LOG(LogDevelopment, Log, TEXT("Player called interact"))
+			Interactable->OnInteract(this);
+	}
+
+}
+
+bool ASCharacter::Server_Interact_Validate(ASBaseInteractable* Interactable)
+{
+	return true;
+}
+
+void ASCharacter::Server_Interact_Implementation(ASBaseInteractable* Interactable)
+{
+	Interact(Interactable);
 }
 
 

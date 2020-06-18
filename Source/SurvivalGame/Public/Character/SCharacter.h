@@ -10,6 +10,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class USHealthComponent;
 class USStaminaComponent;
+class USPlayerInteractionComponent;
+class ASBaseInteractable;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -33,7 +35,6 @@ public:
 
 	float GetDefaultWalkSpeed();
 
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,12 +50,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USStaminaComponent* StaminaComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USPlayerInteractionComponent* InteractionComponent;
 
 public:
 	// ----- Public Movement Functions -----
@@ -121,7 +124,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
 
-	// ----- Player Stats -----
+	// ----- Player Interaction -----
 
+	void TriggerInteract();
+
+	void Interact(ASBaseInteractable* Interactable);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_Interact(ASBaseInteractable* Interactable);
+	bool Server_Interact_Validate(ASBaseInteractable* Interactable);
+	void Server_Interact_Implementation(ASBaseInteractable* Interactable);
 
 };
