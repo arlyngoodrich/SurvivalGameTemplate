@@ -11,6 +11,7 @@ class USpringArmComponent;
 class USHealthComponent;
 class USStaminaComponent;
 class USPlayerInteractionComponent;
+class ASBaseInteractable;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -125,11 +126,13 @@ protected:
 
 	// ----- Player Interaction -----
 
-	void Interact();
+	void TriggerInteract();
+
+	void Interact(ASBaseInteractable* Interactable);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_Interact();
-	bool Server_Interact_Validate();
-	void Server_Interact_Implementation();
+	void Server_Interact(ASBaseInteractable* Interactable);
+	bool Server_Interact_Validate(ASBaseInteractable* Interactable);
+	void Server_Interact_Implementation(ASBaseInteractable* Interactable);
 
 };

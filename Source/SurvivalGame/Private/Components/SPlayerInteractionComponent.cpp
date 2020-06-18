@@ -35,6 +35,8 @@ void USPlayerInteractionComponent::Interact()
 
 bool USPlayerInteractionComponent::GetIsInteractableInView() {return bInteractableInView;}
 
+ASBaseInteractable* USPlayerInteractionComponent::GetInteractableInView() {return InteractableActor;}
+
 // Called when the game starts
 void USPlayerInteractionComponent::BeginPlay()
 {
@@ -60,6 +62,8 @@ void USPlayerInteractionComponent::InitalizeOwnerReferences()
 
 void USPlayerInteractionComponent::StartInteractionChecks()
 {
+	if (OwningPlayer->HasLocalNetOwner() == false) { return; }
+
 	GetWorld()->GetTimerManager().SetTimer(InteractionCheckTimerHandle, this, &USPlayerInteractionComponent::CheckForInteractable, InteractionCheckFrequency, true, 2.f);
 }
 
@@ -111,14 +115,10 @@ void USPlayerInteractionComponent::CheckForInteractable()
 			InteractableActor = nullptr;
 		}
 	}
-	
-
-
-
 }
 
 FHitResult USPlayerInteractionComponent::PerformTrace()
-{
+{  
 		
 	FVector StartLocation;
 	FVector EndLocation;
@@ -136,7 +136,7 @@ FHitResult USPlayerInteractionComponent::PerformTrace()
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, StartLocation, EndLocation, ECC_Visibility, TraceParameters);
 
-	if (bShouldShowTrace)
+	if (bShouldShowTrace && OwningPlayer->HasLocalNetOwner())
 	{
 		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, InteractionCheckFrequency);
 		if (bHit)

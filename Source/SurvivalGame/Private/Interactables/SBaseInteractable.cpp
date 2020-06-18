@@ -6,13 +6,14 @@
 
 // UE4 Includes
 #include "Components/StaticMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASBaseInteractable::ASBaseInteractable()
 {
 	BaseStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseStaticMesh"));
 	SetRootComponent(BaseStaticMesh);
-
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned

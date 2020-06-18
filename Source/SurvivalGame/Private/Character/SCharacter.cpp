@@ -13,11 +13,12 @@
 #include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
-//Custom components
+//Custom Includes
 #include "Components/SHealthComponent.h"
 #include "Components/SStaminaComponent.h"
 #include "Components/SCharacterMovementComponent.h"
 #include "Components/SPlayerInteractionComponent.h"
+#include "Interactables/SBaseInteractable.h"
 
 
 
@@ -133,7 +134,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, & ASCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::EndSprint);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCharacter::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCharacter::TriggerInteract);
 }
 
 void ASCharacter::AddControllerYawInput(float Val)
@@ -243,31 +244,35 @@ void ASCharacter::Server_EndSprinting_Implementation()
 
 // ----- Player Interaction -----
 
-void ASCharacter::Interact()
+void ASCharacter::TriggerInteract()
+{
+	if (InteractionComponent->GetIsInteractableInView() == false) { return; }
+	Interact(InteractionComponent->GetInteractableInView());
+}
+
+void ASCharacter::Interact(ASBaseInteractable* Interactable)
 {
 	//If no interactable in view, don't do anything
-	if (InteractionComponent->GetIsInteractableInView() == false) { return; }
-
 	if (GetLocalRole() < ROLE_Authority)
 	{
-		Server_Interact();
+		Server_Interact(Interactable);
 	}
 	else
 	{
 		UE_LOG(LogDevelopment, Log, TEXT("Player called interact"))
-		InteractionComponent->Interact();
+			Interactable->OnInteract(this);
 	}
 
 }
 
-bool ASCharacter::Server_Interact_Validate()
+bool ASCharacter::Server_Interact_Validate(ASBaseInteractable* Interactable)
 {
 	return true;
 }
 
-void ASCharacter::Server_Interact_Implementation()
+void ASCharacter::Server_Interact_Implementation(ASBaseInteractable* Interactable)
 {
-	Interact();
+	Interact(Interactable);
 }
 
 

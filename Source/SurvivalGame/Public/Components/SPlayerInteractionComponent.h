@@ -23,6 +23,8 @@ public:
 
 	bool GetIsInteractableInView();
 
+	ASBaseInteractable* GetInteractableInView();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
