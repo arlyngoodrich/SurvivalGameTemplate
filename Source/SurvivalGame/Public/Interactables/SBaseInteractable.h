@@ -17,7 +17,7 @@ public:
 	// Sets default values for this actor's properties
 	ASBaseInteractable();
 
-	void OnInteract();
+	void OnInteract(AActor* InteractingActor);
 
 	void OnFocus();
 
@@ -30,5 +30,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* BaseStaticMesh;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	void BP_OnFocus();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	void BP_OnLostFocus();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	void BP_OnInteracted(AActor* InteractingActor);
 
 };

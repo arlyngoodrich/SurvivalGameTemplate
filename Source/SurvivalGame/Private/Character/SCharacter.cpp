@@ -17,6 +17,7 @@
 #include "Components/SHealthComponent.h"
 #include "Components/SStaminaComponent.h"
 #include "Components/SCharacterMovementComponent.h"
+#include "Components/SPlayerInteractionComponent.h"
 
 
 
@@ -38,6 +39,7 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 	//Add Components
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
+	InteractionComponent = CreateDefaultSubobject<USPlayerInteractionComponent>(TEXT("InteractionComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -131,6 +133,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, & ASCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::EndSprint);
 
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCharacter::Interact);
 }
 
 void ASCharacter::AddControllerYawInput(float Val)
@@ -236,6 +239,35 @@ bool ASCharacter::Server_EndSprinting_Validate()
 void ASCharacter::Server_EndSprinting_Implementation()
 {
 	EndSprint();
+}
+
+// ----- Player Interaction -----
+
+void ASCharacter::Interact()
+{
+	//If no interactable in view, don't do anything
+	if (InteractionComponent->GetIsInteractableInView() == false) { return; }
+
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		Server_Interact();
+	}
+	else
+	{
+		UE_LOG(LogDevelopment, Log, TEXT("Player called interact"))
+		InteractionComponent->Interact();
+	}
+
+}
+
+bool ASCharacter::Server_Interact_Validate()
+{
+	return true;
+}
+
+void ASCharacter::Server_Interact_Implementation()
+{
+	Interact();
 }
 
 

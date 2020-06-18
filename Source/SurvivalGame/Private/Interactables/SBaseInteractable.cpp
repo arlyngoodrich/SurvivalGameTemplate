@@ -11,6 +11,8 @@
 ASBaseInteractable::ASBaseInteractable()
 {
 	BaseStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseStaticMesh"));
+	SetRootComponent(BaseStaticMesh);
+
 }
 
 // Called when the game starts or when spawned
@@ -19,20 +21,32 @@ void ASBaseInteractable::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ASBaseInteractable::OnInteract()
+void ASBaseInteractable::OnInteract(AActor* InteractingActor)
 {
 	UE_LOG(LogDevelopment, Log, TEXT("%s interacted with"), *StaticClass()->GetFName().ToString());
+	
+	if (InteractingActor)
+	{
+		BP_OnInteracted(InteractingActor);
+	}
 }
+
 
 void ASBaseInteractable::OnFocus()
 {
 	UE_LOG(LogDevelopment, Log, TEXT("%s has focus"), *StaticClass()->GetFName().ToString());
+
+	BP_OnFocus();
+
 }
 
 void ASBaseInteractable::OnLostFocus()
 {
 	UE_LOG(LogDevelopment, Log, TEXT("%s has lost focus"), *StaticClass()->GetFName().ToString());
+
+	BP_OnLostFocus();
 }
+
 
 
 

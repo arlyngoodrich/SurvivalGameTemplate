@@ -19,9 +19,21 @@
 // Sets default values for this component's properties
 USPlayerInteractionComponent::USPlayerInteractionComponent()
 {
-
+	SetIsReplicated(true);
 }
 
+
+void USPlayerInteractionComponent::Interact()
+{
+	//UE_LOG(LogDevelopment, Log, TEXT("Component Called Interact"))
+
+	if (InteractableActor)
+	{
+		InteractableActor->OnInteract(OwningPlayer);
+	}
+}
+
+bool USPlayerInteractionComponent::GetIsInteractableInView() {return bInteractableInView;}
 
 // Called when the game starts
 void USPlayerInteractionComponent::BeginPlay()
@@ -48,7 +60,7 @@ void USPlayerInteractionComponent::InitalizeOwnerReferences()
 
 void USPlayerInteractionComponent::StartInteractionChecks()
 {
-	GetWorld()->GetTimerManager().SetTimer(InteractionCheckTimerHandle, this, &USPlayerInteractionComponent::CheckForInteractable, InteractionCheckFrequency, true);
+	GetWorld()->GetTimerManager().SetTimer(InteractionCheckTimerHandle, this, &USPlayerInteractionComponent::CheckForInteractable, InteractionCheckFrequency, true, 2.f);
 }
 
 void USPlayerInteractionComponent::CheckForInteractable()
@@ -69,6 +81,7 @@ void USPlayerInteractionComponent::CheckForInteractable()
 			if (OldInteractable == NewInteractable)
 			{
 				//Interactable is the same, don't do anything
+				InteractableActor = NewInteractable;
 				return;
 			}
 			else
@@ -112,7 +125,7 @@ FHitResult USPlayerInteractionComponent::PerformTrace()
 	FRotator Rotation;
 	FHitResult Hit;
 
-	if (OwningPlayer == nullptr) {  return Hit; }
+	if (OwningPlayer == nullptr || OwningPlayer->GetController() == nullptr) {  return Hit; }
 
 	OwningPlayer->GetController()->GetPlayerViewPoint(StartLocation, Rotation);
 

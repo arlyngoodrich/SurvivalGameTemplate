@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USHealthComponent;
 class USStaminaComponent;
+class USPlayerInteractionComponent;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -53,6 +54,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USStaminaComponent* StaminaComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USPlayerInteractionComponent* InteractionComponent;
 
 public:
 	// ----- Public Movement Functions -----
@@ -119,7 +123,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
 
-	// ----- Player Stats -----
+	// ----- Player Interaction -----
 
+	void Interact();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_Interact();
+	bool Server_Interact_Validate();
+	void Server_Interact_Implementation();
 
 };
