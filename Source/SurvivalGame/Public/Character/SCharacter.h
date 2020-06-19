@@ -12,6 +12,7 @@ class USHealthComponent;
 class USStaminaComponent;
 class USPlayerInteractionComponent;
 class ASBaseInteractable;
+class USInventoryComponent;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -34,6 +35,9 @@ public:
 	float GetSprintSpeedModifier();
 
 	float GetDefaultWalkSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	USInventoryComponent* GetInventoryComponent();
 
 protected:
 	// Called when the game starts or when spawned
@@ -58,6 +62,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USPlayerInteractionComponent* InteractionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USInventoryComponent* InventoryComponent;
 
 public:
 	// ----- Public Movement Functions -----

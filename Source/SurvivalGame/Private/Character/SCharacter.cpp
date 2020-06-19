@@ -19,6 +19,7 @@
 #include "Components/SCharacterMovementComponent.h"
 #include "Components/SPlayerInteractionComponent.h"
 #include "Interactables/SBaseInteractable.h"
+#include "Components/SInventoryComponent.h"
 
 
 
@@ -41,6 +42,7 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
 	InteractionComponent = CreateDefaultSubobject<USPlayerInteractionComponent>(TEXT("InteractionComponent"));
+	InventoryComponent = CreateDefaultSubobject<USInventoryComponent>(TEXT("InventoryComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -100,6 +102,8 @@ void ASCharacter::SetIsSprinting(bool IsSprinting) {bIsSprinting = IsSprinting;}
 float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
 
 float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
+
+USInventoryComponent* ASCharacter::GetInventoryComponent() {return InventoryComponent;}
 
 // ------------- Movement -------------
 

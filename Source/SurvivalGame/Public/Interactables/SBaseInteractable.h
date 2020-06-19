@@ -17,11 +17,11 @@ public:
 	// Sets default values for this actor's properties
 	ASBaseInteractable();
 
-	void OnInteract(AActor* InteractingActor);
+	virtual void OnInteract(AActor* InteractingActor);
 
-	void OnFocus();
+	virtual void OnFocus();
 
-	void OnLostFocus();
+	virtual void OnLostFocus();
 
 protected:
 	// Called when the game starts or when spawned
