@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Interactables/SBaseInteractable.h"
+#include "SInventoryData.h"
 #include "SBasePickup.generated.h"
 
 /**
@@ -14,4 +15,27 @@ class SURVIVALGAME_API ASBasePickup : public ASBaseInteractable
 {
 	GENERATED_BODY()
 	
+public:
+
+	virtual void BeginPlay() override;
+
+	virtual void OnInteract(AActor* InteractingActor) override;
+
+	virtual void OnFocus() override;
+
+	virtual void OnLostFocus() override;
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
+	bool bShouldDrawOutline;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
+	FInventoryData InventoryItemData;
+
+	void PerformPickup(AActor* InteractingActor);
+
+	void ControlOutline(bool DrawLine);
+
+
 };

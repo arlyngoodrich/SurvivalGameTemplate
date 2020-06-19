@@ -55,9 +55,16 @@ protected:
 	bool Server_OneTimeLowerStamina_Validate(float StaminaToDrain);
 	void Server_OneTimeLowerStamina_Implementation(float StaminaToDrain);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_OneTimeAddStamina(float StaminaAdd);
+	bool Server_OneTimeAddStamina_Validate(float StaminaAdd);
+	void Server_OneTimeAddStamina_Implementation(float StaminaAdd);
+
 public:
 
 	bool RequestOneTimeStaminaDrain(float StaminaDrain);
+
+	bool RequestOneTimeStaminaAdd(float StaminaAdd);
 
 	void ControlStaminaRegen(bool StaminaShouldRegen);
 

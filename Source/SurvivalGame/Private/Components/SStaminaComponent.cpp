@@ -119,6 +119,18 @@ void USStaminaComponent::Server_OneTimeLowerStamina_Implementation(float Stamina
 
 }
 
+bool USStaminaComponent::Server_OneTimeAddStamina_Validate(float StaminaAdd)
+{
+	return true;
+}
+
+void USStaminaComponent::Server_OneTimeAddStamina_Implementation(float StaminaAdd)
+{
+
+	CurrentStamina = CurrentStamina + StaminaAdd;
+
+}
+
 bool USStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 {
 	if (CurrentStamina >= StaminaDrain)
@@ -128,6 +140,18 @@ bool USStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 	}
 	
 	
+	return false;
+}
+
+bool USStaminaComponent::RequestOneTimeStaminaAdd(float StaminaAdd)
+{
+	if (MaxStamina >= StaminaAdd + CurrentStamina)
+	{
+		Server_OneTimeAddStamina(StaminaAdd);
+		return true;
+	}
+
+
 	return false;
 }
 

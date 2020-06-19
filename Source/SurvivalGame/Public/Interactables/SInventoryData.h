@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interactables/InventoryItemBehaviorObject.h"
 #include "SInventoryData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -26,6 +27,12 @@ struct FInventoryData
 	UTexture2D* ItemIcom;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
-	UClass* ClassReference;
+	UClass* InWorldClassReference;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
+	bool bCanBeUsedFromInventory;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory Item Data")
+	TSubclassOf<UInventoryItemBehaviorObject> InventoryBehaviorObject;
 
 };

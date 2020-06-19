@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	USInventoryComponent* GetInventoryComponent();
 
+	UFUNCTION(BlueprintCallable, Category = "State")
+	USStaminaComponent* GetStaminaComponent();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

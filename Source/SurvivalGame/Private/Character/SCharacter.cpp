@@ -105,6 +105,8 @@ float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
 
 USInventoryComponent* ASCharacter::GetInventoryComponent() {return InventoryComponent;}
 
+USStaminaComponent* ASCharacter::GetStaminaComponent(){return StaminaComponent;}
+
 // ------------- Movement -------------
 
 
