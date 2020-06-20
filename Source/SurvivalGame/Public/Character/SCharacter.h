@@ -13,6 +13,7 @@ class USStaminaComponent;
 class USPlayerInteractionComponent;
 class ASBaseInteractable;
 class USInventoryComponent;
+class UItem;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -26,7 +27,7 @@ public:
 	
 
 
-	// ----- Public Getters/Setters -----
+	// ======= Public Getters/Setters ======= ======= ======= =======
 	
 	bool GetWantsToSprint();
 
@@ -52,7 +53,7 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// ----- Components -----
+	// ======= Components ======= ======= ======= =======
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
@@ -72,6 +73,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USInventoryComponent* InventoryComponent;
 
+
+	// =======  Movement Functions ======= ======= ======= =======
+
 public:
 	// ----- Public Movement Functions -----
 
@@ -81,6 +85,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void AddControllerYawInput(float Val) override;
+
 
 protected:
 	// ----- Protected Movement Functions -----
@@ -137,7 +142,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float YawInput;
 
-	// ----- Player Interaction -----
+	// ======== Player Interaction ======= ======= ======= =======
+
+
+	// ----- Public Interaction Functions -----
+
+	
+	// ----- Protected Interaction Functions -----
 
 	void TriggerInteract();
 

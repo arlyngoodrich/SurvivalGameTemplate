@@ -30,13 +30,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* BaseStaticMesh;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnFocus"))
 	void BP_OnFocus();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnLostFocus"))
 	void BP_OnLostFocus();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnInteracted"))
 	void BP_OnInteracted(AActor* InteractingActor);
 
 };

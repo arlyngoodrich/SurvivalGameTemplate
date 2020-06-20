@@ -3,13 +3,14 @@
 
 
 
+#include "Components/SStaminaComponent.h"
 #include "SurvivalGame/SurvivalGame.h"
 
 #include "Engine/Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 
-#include "Components/SStaminaComponent.h"
+
 
 
 

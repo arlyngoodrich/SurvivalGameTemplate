@@ -6,6 +6,8 @@
 #include "Interactables/BaseClasses/SBaseInteractable.h"
 #include "SBasePickup.generated.h"
 
+class UItem;
+
 /**
  * 
  */

@@ -13,7 +13,6 @@ void ASBasePickup::BeginPlay()
 }
 
 
-
 void ASBasePickup::OnInteract(AActor* InteractingActor)
 {
 	Super::OnInteract(InteractingActor);
@@ -35,6 +34,8 @@ void ASBasePickup::OnLostFocus()
 	Super::OnLostFocus();
 	if (bShouldDrawOutline) { ControlOutline(false); }
 }
+
+
 
 void ASBasePickup::PerformPickup(AActor* InteractingActor)
 {
