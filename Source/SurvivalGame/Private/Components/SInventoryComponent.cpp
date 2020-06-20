@@ -3,6 +3,7 @@
 
 #include "Components/SInventoryComponent.h"
 #include "SurvivalGame/SurvivalGame.h"
+
 #include "Net/UnrealNetwork.h"
 
 
@@ -30,8 +31,10 @@ void USInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >
 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(USInventoryComponent, MaxWeight);
 	DOREPLIFETIME(USInventoryComponent, CurrentWeight);
-
+	
 }
+
 
 

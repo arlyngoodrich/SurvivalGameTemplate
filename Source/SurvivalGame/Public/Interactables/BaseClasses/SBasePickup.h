@@ -6,7 +6,6 @@
 #include "Interactables/BaseClasses/SBaseInteractable.h"
 #include "SBasePickup.generated.h"
 
-class UItem;
 
 /**
  * 
@@ -31,9 +30,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
 	bool bShouldDrawOutline;
 
+
 	void PerformPickup(AActor* InteractingActor);
 
 	void ControlOutline(bool DrawLine);
-
 
 };

@@ -2,6 +2,7 @@
 
 
 #include "Interactables/BaseClasses/SBasePickup.h"
+#include "SurvivalGame/SurvivalGame.h"
 #include "Character/SCharacter.h"
 #include "Components/SInventoryComponent.h"
 
@@ -36,7 +37,6 @@ void ASBasePickup::OnLostFocus()
 }
 
 
-
 void ASBasePickup::PerformPickup(AActor* InteractingActor)
 {
 	if (InteractingActor)
@@ -50,12 +50,8 @@ void ASBasePickup::PerformPickup(AActor* InteractingActor)
 			USInventoryComponent* InteractingInventoryComponent;
 			InteractingInventoryComponent = InteractingCharacter->GetInventoryComponent();
 
-			/*
-			if (InteractingInventoryComponent->AddItem(InventoryItemData))
-			{
-				SetLifeSpan(.1f);
-			}
-			*/
+			//picup action needed here
+			
 		}
 	}
 }

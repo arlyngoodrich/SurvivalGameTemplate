@@ -7,7 +7,6 @@
 #include "SInventoryComponent.generated.h"
 
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVALGAME_API USInventoryComponent : public UActorComponent
 {
@@ -18,16 +17,16 @@ public:
 	USInventoryComponent();
 
 
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	float MaxWeight = 200.f;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Inventory")
 	float CurrentWeight;
-
 
 		
 };
