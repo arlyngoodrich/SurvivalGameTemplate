@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Interactables/SBasePickup.h"
+#include "Interactables/BaseClasses/SBasePickup.h"
 #include "Character/SCharacter.h"
 #include "Components/SInventoryComponent.h"
 
@@ -49,10 +49,12 @@ void ASBasePickup::PerformPickup(AActor* InteractingActor)
 			USInventoryComponent* InteractingInventoryComponent;
 			InteractingInventoryComponent = InteractingCharacter->GetInventoryComponent();
 
+			/*
 			if (InteractingInventoryComponent->AddItem(InventoryItemData))
 			{
 				SetLifeSpan(.1f);
 			}
+			*/
 		}
 	}
 }

@@ -36,6 +36,8 @@ void USStaminaComponent::BeginPlay()
 
 float USStaminaComponent::GetCurrentStamina() {return CurrentStamina;}
 
+float USStaminaComponent::GetMaxStamina() {return MaxStamina;}
+
 
 void USStaminaComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps) const
 {
@@ -127,7 +129,7 @@ bool USStaminaComponent::Server_OneTimeAddStamina_Validate(float StaminaAdd)
 void USStaminaComponent::Server_OneTimeAddStamina_Implementation(float StaminaAdd)
 {
 
-	CurrentStamina = CurrentStamina + StaminaAdd;
+	RequestOneTimeStaminaAdd(StaminaAdd);
 
 }
 
@@ -145,13 +147,25 @@ bool USStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 
 bool USStaminaComponent::RequestOneTimeStaminaAdd(float StaminaAdd)
 {
+	UE_LOG(LogDevelopment, Log, TEXT("Requesting Oen Time Stamina Addition Received"));
+
 	if (MaxStamina >= StaminaAdd + CurrentStamina)
 	{
-		Server_OneTimeAddStamina(StaminaAdd);
+
+		UE_LOG(LogDevelopment, Log, TEXT("Requesting One Time Stamina Addition Approved"));
+
+		if (GetOwnerRole() < ROLE_Authority)
+		{
+			Server_OneTimeAddStamina(StaminaAdd);
+		}
+		else
+		{
+			CurrentStamina = CurrentStamina + StaminaAdd;
+			UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
+		}
+
 		return true;
 	}
-
-
 	return false;
 }
 

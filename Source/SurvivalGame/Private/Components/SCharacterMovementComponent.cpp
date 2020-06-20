@@ -24,6 +24,7 @@ void USCharacterMovementComponent::BeginPlay()
 float USCharacterMovementComponent::GetMaxSpeed() const
 {
 	float MaxSpeed = Super::GetMaxSpeed();
+
 	
 	if (OwningCharacter)
 	{
@@ -36,6 +37,7 @@ float USCharacterMovementComponent::GetMaxSpeed() const
 		{
 			MaxSpeed = DefaultMaxSpeed;
 
+			//InteruptSprint if crouched
 			if (OwningCharacter->GetWantsToSprint() == true)
 			{
 				OwningCharacter->InteruptSprint();

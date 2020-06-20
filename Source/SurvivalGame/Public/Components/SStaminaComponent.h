@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Player State")
 	float GetCurrentStamina();
 
+	UFUNCTION(BlueprintPure, Category = "Player State")
+	float GetMaxStamina();
+
 protected:
 
 	

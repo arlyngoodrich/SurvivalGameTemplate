@@ -18,7 +18,7 @@
 #include "Components/SStaminaComponent.h"
 #include "Components/SCharacterMovementComponent.h"
 #include "Components/SPlayerInteractionComponent.h"
-#include "Interactables/SBaseInteractable.h"
+#include "Interactables/BaseClasses/SBaseInteractable.h"
 #include "Components/SInventoryComponent.h"
 
 
@@ -106,6 +106,8 @@ float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
 USInventoryComponent* ASCharacter::GetInventoryComponent() {return InventoryComponent;}
 
 USStaminaComponent* ASCharacter::GetStaminaComponent(){return StaminaComponent;}
+
+float ASCharacter::GetMinStaminaToSprint() {return MinStamToSprint;}
 
 // ------------- Movement -------------
 

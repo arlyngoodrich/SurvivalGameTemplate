@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactables/SBaseInteractable.h"
-#include "SInventoryData.h"
+#include "Interactables/BaseClasses/SBaseInteractable.h"
 #include "SBasePickup.generated.h"
 
 /**
@@ -29,9 +28,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
 	bool bShouldDrawOutline;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
-	FInventoryData InventoryItemData;
 
 	void PerformPickup(AActor* InteractingActor);
 

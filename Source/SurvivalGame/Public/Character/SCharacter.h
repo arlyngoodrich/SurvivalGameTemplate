@@ -42,6 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	USStaminaComponent* GetStaminaComponent();
 
+	UFUNCTION(BlueprintPure, Category = "Player State")
+	float GetMinStaminaToSprint();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
