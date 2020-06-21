@@ -35,11 +35,11 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Hunger")
+	UFUNCTION(BlueprintCallable, Category = "Hunger")
 	void IncreaseHunger(float Amount);
 
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Hunger")
+	UFUNCTION(BlueprintCallable, Category = "Hunger")
 	void DecreaseHunger(float Amount);
 
 protected:
@@ -59,6 +59,18 @@ protected:
 	ASCharacter* Owner;
 	USStaminaComponent* OwnerStaminaComponent;
 
+	FTimerHandle StarvingDamangeTimerHandle;
+
+	void ApplyStarvingDamange();
+	
+	void StartStarvingDamange();
+
+	void EndStarvingDamage();
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Hugner")
+	bool bIsStarving;
+
+
 	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "Hugner")
 	float MaxHunger = 100.f;
 
@@ -67,6 +79,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hugner")
 	float StarvingDamage = 10.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hugner")
+	float StarvingDamageInterval = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hugner")
 	float HungerDrainAmount = 1.f;

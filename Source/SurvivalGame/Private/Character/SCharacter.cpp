@@ -20,6 +20,7 @@
 #include "Components/SPlayerInteractionComponent.h"
 #include "Interactables/BaseClasses/SBaseInteractable.h"
 #include "Components/SInventoryComponent.h"
+#include "Components/SHungerComponent.h"
 
 
 
@@ -43,6 +44,7 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
 	InteractionComponent = CreateDefaultSubobject<USPlayerInteractionComponent>(TEXT("InteractionComponent"));
 	InventoryComponent = CreateDefaultSubobject<USInventoryComponent>(TEXT("InventoryComponent"));
+	HungerComponent = CreateDefaultSubobject<USHungerComponent>(TEXT("HungerComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));

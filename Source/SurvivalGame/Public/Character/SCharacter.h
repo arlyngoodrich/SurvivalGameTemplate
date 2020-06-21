@@ -14,6 +14,7 @@ class USPlayerInteractionComponent;
 class ASBaseInteractable;
 class USInventoryComponent;
 class UItem;
+class USHungerComponent;
 
 UCLASS()
 class SURVIVALGAME_API ASCharacter : public ACharacter
@@ -72,6 +73,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USInventoryComponent* InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USHungerComponent* HungerComponent;
 
 
 	// =======  Movement Functions ======= ======= ======= =======
