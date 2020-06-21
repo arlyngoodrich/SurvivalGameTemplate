@@ -260,6 +260,9 @@ void ASCharacter::TriggerInteract()
 
 void ASCharacter::Interact(ASBaseInteractable* Interactable)
 {
+	
+	if (Interactable == nullptr) { return; }
+
 	//If no interactable in view, don't do anything
 	if (GetLocalRole() < ROLE_Authority)
 	{
@@ -268,6 +271,8 @@ void ASCharacter::Interact(ASBaseInteractable* Interactable)
 	else
 	{
 		UE_LOG(LogDevelopment, Log, TEXT("Player called interact"))
+
+			if (Interactable == nullptr) { return; }
 			Interactable->OnInteract(this);
 	}
 

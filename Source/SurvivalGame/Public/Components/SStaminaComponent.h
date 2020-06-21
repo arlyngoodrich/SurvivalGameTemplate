@@ -65,8 +65,10 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
 	bool RequestOneTimeStaminaDrain(float StaminaDrain);
 
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
 	bool RequestOneTimeStaminaAdd(float StaminaAdd);
 
 	void ControlStaminaRegen(bool StaminaShouldRegen);

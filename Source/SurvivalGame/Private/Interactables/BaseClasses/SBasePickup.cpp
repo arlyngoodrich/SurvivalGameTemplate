@@ -49,8 +49,7 @@ void ASBasePickup::PerformPickup(AActor* InteractingActor)
 
 			USInventoryComponent* InteractingInventoryComponent;
 			InteractingInventoryComponent = InteractingCharacter->GetInventoryComponent();
-
-			//picup action needed here
+				
 			
 		}
 	}
