@@ -60,24 +60,41 @@ struct FItemData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
 	bool bCanBeUsedFromInventory;
 
+	//Triggered when an item is used from an inventory
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (EditCondition = "bCanBeUsedFromInventory"))
+	TSubclassOf<USGameplayEffect> GamePlayEffect;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
 	bool bCanBeDropped;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
+	bool bCanBeEquipped;
+
+	//Only needed if is an equipment type item
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (EditCondition = "bCanBeEquipped"))
+	USkeletalMeshComponent* SkeletalMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
 	bool bCanBeStacked;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (EditCondition = "bCanBeStacked"))
+	int32 Quantity = 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (ClampMin = 0, ClmapMax = 100))
-	float ItemHealth;
+	float ItemHealth = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (ClampMin = 0))
 	float ItemWeight;
 
-	// will be ignored if DecayAmountPerInterval is set to 0
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
+	bool bCanDecay;
+
+	// will be ignored if DecayAmountPerInterval is set to 0
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (EditCondition = "bCanDecay"))
 	EItemHealthDecayType DecayType;
 
 	// Will be ignored if Health Decay type set to None
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data", meta = (EditCondition = "bCanDecay"))
 	float DecayAmountPerInterval;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
@@ -86,12 +103,5 @@ struct FItemData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
 	EItemSize ItemSize;
 
-	//Triggered when an item is used from an inventory
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
-	TSubclassOf<USGameplayEffect> GamePlayEffect;
-
-	//Only needed if is an equipment type item
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Item Data")
-	USkeletalMeshComponent* SkeletalMesh;
 
 };

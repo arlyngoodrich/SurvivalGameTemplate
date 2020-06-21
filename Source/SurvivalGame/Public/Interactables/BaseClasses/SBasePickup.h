@@ -31,7 +31,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Interaction")
 	bool bShouldDrawOutline;
 		
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Information")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Information")
 	FItemData ItemInformation;
 
 	void PerformPickup(AActor* InteractingActor);

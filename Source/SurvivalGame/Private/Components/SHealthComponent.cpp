@@ -13,8 +13,8 @@ USHealthComponent::USHealthComponent()
 {
 	
 	SetIsReplicated(true);
-	DefaultHealth = 100;
-	Health = DefaultHealth;
+	MaxHealth = 100;
+	CurrentHealth = MaxHealth;
 }
 
 
@@ -44,7 +44,7 @@ void USHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& O
 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(USHealthComponent, Health);
+	DOREPLIFETIME(USHealthComponent, CurrentHealth);
 }
 
 
@@ -55,11 +55,11 @@ void USHealthComponent::OnOwnerTakeDamange(AActor* DamagedActor, float Damage, c
 	// If its 0 or less, nobody cares
 	if (Damage <= 0.0f) { return; }
 	
-	Health = FMath::Clamp(Health - Damage, 0.f, DefaultHealth);
+	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.f, MaxHealth);
 
-	UE_LOG(LogDevelopment, Log, TEXT("New health is %s"), *FString::SanitizeFloat(Health));
+	UE_LOG(LogDevelopment, Log, TEXT("New health is %s"), *FString::SanitizeFloat(CurrentHealth));
 
-	if (Health <= 0)
+	if (CurrentHealth <= 0)
 	{
 		OnDeath.Broadcast();
 	}
@@ -68,7 +68,28 @@ void USHealthComponent::OnOwnerTakeDamange(AActor* DamagedActor, float Damage, c
 
 void USHealthComponent::OnRep_HealthChanged()
 {
-	OnHealthChange.Broadcast(Health);
+	OnHealthChange.Broadcast(CurrentHealth);
+}
 
+void USHealthComponent::IncreaseHealth(float Amount)
+{
+	if (GetOwnerRole() < ROLE_Authority)
+	{
+		Server_IncreaseHealth(Amount);
+	}
+	else
+	{
+		CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.f, MaxHealth);
+		UE_LOG(LogDevelopment, Log, TEXT("New health is %s"), *FString::SanitizeFloat(CurrentHealth));
+	}
+}
 
+bool USHealthComponent::Server_IncreaseHealth_Validate(float Amount)
+{
+	return true;
+}
+
+void USHealthComponent::Server_IncreaseHealth_Implementation(float Amount)
+{
+	IncreaseHealth(Amount);
 }

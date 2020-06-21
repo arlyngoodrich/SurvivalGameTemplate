@@ -59,7 +59,8 @@ void USStaminaComponent::RaiseStamina()
 	if (CurrentStamina < MaxStamina)
 	{
 		CurrentStamina++;
-		
+		OnStaminaRegen.Broadcast();
+
 		//UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}
 
@@ -71,6 +72,7 @@ void USStaminaComponent::LowerStamina()
 	if (CurrentStamina > 0)
 	{
 		CurrentStamina--;
+		OnStaminaDrain.Broadcast();
 
 		//UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}

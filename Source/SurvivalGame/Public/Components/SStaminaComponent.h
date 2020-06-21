@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "SStaminaComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaRegen);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaDrain);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVALGAME_API USStaminaComponent : public UActorComponent
@@ -22,11 +25,17 @@ protected:
 
 public:	
 	
-	UFUNCTION(BlueprintPure, Category = "Player State")
+	UFUNCTION(BlueprintPure, Category = "Stamina")
 	float GetCurrentStamina();
 
-	UFUNCTION(BlueprintPure, Category = "Player State")
+	UFUNCTION(BlueprintPure, Category = "Stamina")
 	float GetMaxStamina();
+
+	UPROPERTY(BlueprintAssignable, Category = "Stamina")
+	FOnStaminaRegen OnStaminaRegen;
+
+	UPROPERTY(BlueprintAssignable, Category = "Stamina")
+	FOnStaminaRegen OnStaminaDrain;
 
 protected:
 
