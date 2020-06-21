@@ -37,6 +37,8 @@ float USCharacterMovementComponent::GetMaxSpeed() const
 		else
 		{
 			MaxSpeed = DefaultMaxSpeed;
+			OwningCharacter->InteruptSprint();
+			OwningCharacter->SetIsSprinting(false);
 
 			//InteruptSprint if crouched
 			if (OwningCharacter->GetWantsToSprint() == true)
