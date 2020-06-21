@@ -11,9 +11,6 @@
 // This class should not be dependent on any others besides actor for maximum flexibility.  
 // It should be able to be used by everthing from a wall to a character 
 
-
-
-
 class ASCharacter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChange, float, NewHealth);
