@@ -66,6 +66,10 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Bind to death
+	HealthComponent->OnDeath.AddDynamic(this, &ASCharacter::OnDeath);
+
 }
 
 
@@ -83,8 +87,7 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLife
 
 	DOREPLIFETIME(ASCharacter, bWantsToSprint);
 	DOREPLIFETIME(ASCharacter, bIsSprinting);
-
-	
+	DOREPLIFETIME(ASCharacter, bIsAlive);
 }
 
 
@@ -116,7 +119,10 @@ float ASCharacter::GetMinStaminaToSprint() {return MinStamToSprint;}
 
 void ASCharacter::InteruptSprint()
 {
-	EndSprint();
+	if (bIsSprinting)
+	{
+		EndSprint();
+	}
 }
 
 
@@ -154,6 +160,7 @@ void ASCharacter::AddControllerYawInput(float Val)
 
 
 // ---- Protected Movement Functions
+
 
 //Forward and Backward
 void ASCharacter::MoveForward(float Value)
@@ -193,6 +200,30 @@ void ASCharacter::Jump()
 	}
 
 	UE_LOG(LogDevelopment, Log, TEXT("Jump denied"));
+}
+
+void ASCharacter::OnDeath()
+{
+	//Tell Client to die... 
+	if (GetLocalRole() < ROLE_Authority) {Client_OnDeath();}
+
+	UE_LOG(LogDevelopment, Log, TEXT("Died"))
+
+
+	InteruptSprint();
+	GetMovementComponent()->StopMovementImmediately();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	bIsAlive = false;
+
+	DetachFromControllerPendingDestroy();
+	SetLifeSpan(2.f);
+
+}
+  
+void ASCharacter::Client_OnDeath_Implementation()
+{
+	OnDeath();
 }
 
 
