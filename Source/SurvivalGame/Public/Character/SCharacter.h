@@ -110,6 +110,17 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
 	bool bIsSprinting;
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player State")
+	bool bIsAlive = true;
+
+	//Only called from server health component
+	UFUNCTION()
+	void OnDeath();
+
+	UFUNCTION(Client, Reliable)
+	void Client_OnDeath();
+	void Client_OnDeath_Implementation();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_StartSprinting();
 	bool Server_StartSprinting_Validate();
