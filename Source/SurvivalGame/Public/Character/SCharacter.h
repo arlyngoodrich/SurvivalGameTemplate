@@ -38,13 +38,19 @@ public:
 
 	float GetDefaultWalkSpeed();
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UFUNCTION(BlueprintCallable, Category = "Components")
 	USInventoryComponent* GetInventoryComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "State")
+	UFUNCTION(BlueprintCallable, Category = "Components")
 	USStaminaComponent* GetStaminaComponent();
 
-	UFUNCTION(BlueprintPure, Category = "Player State")
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	USHungerComponent* GetHungerComponent();
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	USHealthComponent* GetHealthComponent();
+
+	UFUNCTION(BlueprintPure, Category = "Components")
 	float GetMinStaminaToSprint();
 
 protected:

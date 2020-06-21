@@ -32,7 +32,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Health")
 	FOnDeath OnDeath;
 
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -43,12 +42,23 @@ protected:
 	void OnOwnerTakeDamange(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
 	UPROPERTY(ReplicatedUsing = OnRep_HealthChanged, BlueprintReadOnly, Category = "Health")
-	float Health;
+	float CurrentHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-	float DefaultHealth;
+	float MaxHealth;
 
 	UFUNCTION()
 	void OnRep_HealthChanged();
 
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void IncreaseHealth(float Amount);
+
+protected:
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_IncreaseHealth(float Amount);
+	bool Server_IncreaseHealth_Validate(float Amount);
+	void Server_IncreaseHealth_Implementation(float Amount);
 };

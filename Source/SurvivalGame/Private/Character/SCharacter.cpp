@@ -112,6 +112,10 @@ USInventoryComponent* ASCharacter::GetInventoryComponent() {return InventoryComp
 
 USStaminaComponent* ASCharacter::GetStaminaComponent(){return StaminaComponent;}
 
+USHungerComponent* ASCharacter::GetHungerComponent() {return HungerComponent;}
+
+USHealthComponent* ASCharacter::GetHealthComponent() {return HealthComponent;}
+
 float ASCharacter::GetMinStaminaToSprint() {return MinStamToSprint;}
 
 // ------------- Movement -------------

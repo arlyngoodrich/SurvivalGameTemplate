@@ -54,6 +54,9 @@ void USHungerComponent::Initalize()
 
 	OwnerStaminaComponent = Owner->GetStaminaComponent();
 	OwnerStaminaComponent->OnStaminaRegen.AddDynamic(this, &USHungerComponent::DrainHunger);
+	OwnerStaminaComponent->OnStaminaDrain.AddDynamic(this, &USHungerComponent::DrainHunger);
+
+
 	UE_LOG(LogDevelopment, Log, TEXT("HungerCompoennt Initialized"));
 	
 }

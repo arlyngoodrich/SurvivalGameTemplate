@@ -38,7 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hunger")
 	void IncreaseHunger(float Amount);
 
-
 	UFUNCTION(BlueprintCallable, Category = "Hunger")
 	void DecreaseHunger(float Amount);
 

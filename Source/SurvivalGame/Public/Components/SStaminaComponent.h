@@ -7,6 +7,7 @@
 #include "SStaminaComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaRegen);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaDrain);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -32,6 +33,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Stamina")
 	FOnStaminaRegen OnStaminaRegen;
+
+	UPROPERTY(BlueprintAssignable, Category = "Stamina")
+	FOnStaminaRegen OnStaminaDrain;
 
 protected:
 

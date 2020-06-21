@@ -72,6 +72,7 @@ void USStaminaComponent::LowerStamina()
 	if (CurrentStamina > 0)
 	{
 		CurrentStamina--;
+		OnStaminaDrain.Broadcast();
 
 		//UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
 	}
