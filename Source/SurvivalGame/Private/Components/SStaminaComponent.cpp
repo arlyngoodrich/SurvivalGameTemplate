@@ -3,13 +3,14 @@
 
 
 
+#include "Components/SStaminaComponent.h"
 #include "SurvivalGame/SurvivalGame.h"
 
 #include "Engine/Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 
-#include "Components/SStaminaComponent.h"
+
 
 
 
@@ -35,6 +36,8 @@ void USStaminaComponent::BeginPlay()
 }
 
 float USStaminaComponent::GetCurrentStamina() {return CurrentStamina;}
+
+float USStaminaComponent::GetMaxStamina() {return MaxStamina;}
 
 
 void USStaminaComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps) const
@@ -119,6 +122,18 @@ void USStaminaComponent::Server_OneTimeLowerStamina_Implementation(float Stamina
 
 }
 
+bool USStaminaComponent::Server_OneTimeAddStamina_Validate(float StaminaAdd)
+{
+	return true;
+}
+
+void USStaminaComponent::Server_OneTimeAddStamina_Implementation(float StaminaAdd)
+{
+
+	RequestOneTimeStaminaAdd(StaminaAdd);
+
+}
+
 bool USStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 {
 	if (CurrentStamina >= StaminaDrain)
@@ -128,6 +143,30 @@ bool USStaminaComponent::RequestOneTimeStaminaDrain(float StaminaDrain)
 	}
 	
 	
+	return false;
+}
+
+bool USStaminaComponent::RequestOneTimeStaminaAdd(float StaminaAdd)
+{
+	UE_LOG(LogDevelopment, Log, TEXT("Requesting Oen Time Stamina Addition Received"));
+
+	if (MaxStamina >= StaminaAdd + CurrentStamina)
+	{
+
+		UE_LOG(LogDevelopment, Log, TEXT("Requesting One Time Stamina Addition Approved"));
+
+		if (GetOwnerRole() < ROLE_Authority)
+		{
+			Server_OneTimeAddStamina(StaminaAdd);
+		}
+		else
+		{
+			CurrentStamina = CurrentStamina + StaminaAdd;
+			UE_LOG(LogDevelopment, Log, TEXT("Stamina: %s"), *FString::SanitizeFloat(CurrentStamina))
+		}
+
+		return true;
+	}
 	return false;
 }
 

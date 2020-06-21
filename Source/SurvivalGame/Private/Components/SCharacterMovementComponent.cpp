@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "Components/SCharacterMovementComponent.h"
 #include "SurvivalGame/SurvivalGame.h"
 
-#include "Components/SCharacterMovementComponent.h"
+
 #include "Character/SCharacter.h"
 
 
@@ -24,6 +25,7 @@ void USCharacterMovementComponent::BeginPlay()
 float USCharacterMovementComponent::GetMaxSpeed() const
 {
 	float MaxSpeed = Super::GetMaxSpeed();
+
 	
 	if (OwningCharacter)
 	{
@@ -36,6 +38,7 @@ float USCharacterMovementComponent::GetMaxSpeed() const
 		{
 			MaxSpeed = DefaultMaxSpeed;
 
+			//InteruptSprint if crouched
 			if (OwningCharacter->GetWantsToSprint() == true)
 			{
 				OwningCharacter->InteruptSprint();

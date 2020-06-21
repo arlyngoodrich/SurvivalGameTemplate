@@ -7,7 +7,7 @@
 
 //Custom Includes
 #include "Character/SCharacter.h"
-#include "Interactables/SBaseInteractable.h"
+#include "Interactables/BaseClasses/SBaseInteractable.h"
 
 //UE4 Includes
 #include "DrawDebugHelpers.h"

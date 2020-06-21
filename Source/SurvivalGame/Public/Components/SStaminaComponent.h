@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Player State")
 	float GetCurrentStamina();
 
+	UFUNCTION(BlueprintPure, Category = "Player State")
+	float GetMaxStamina();
+
 protected:
 
 	
@@ -55,9 +58,18 @@ protected:
 	bool Server_OneTimeLowerStamina_Validate(float StaminaToDrain);
 	void Server_OneTimeLowerStamina_Implementation(float StaminaToDrain);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_OneTimeAddStamina(float StaminaAdd);
+	bool Server_OneTimeAddStamina_Validate(float StaminaAdd);
+	void Server_OneTimeAddStamina_Implementation(float StaminaAdd);
+
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
 	bool RequestOneTimeStaminaDrain(float StaminaDrain);
+
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	bool RequestOneTimeStaminaAdd(float StaminaAdd);
 
 	void ControlStaminaRegen(bool StaminaShouldRegen);
 

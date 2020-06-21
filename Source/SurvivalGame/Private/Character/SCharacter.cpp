@@ -18,7 +18,8 @@
 #include "Components/SStaminaComponent.h"
 #include "Components/SCharacterMovementComponent.h"
 #include "Components/SPlayerInteractionComponent.h"
-#include "Interactables/SBaseInteractable.h"
+#include "Interactables/BaseClasses/SBaseInteractable.h"
+#include "Components/SInventoryComponent.h"
 
 
 
@@ -41,6 +42,7 @@ ASCharacter::ASCharacter(const FObjectInitializer& ObjectInitializer)
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	StaminaComponent = CreateDefaultSubobject<USStaminaComponent>(TEXT("StaminaComponent"));
 	InteractionComponent = CreateDefaultSubobject<USPlayerInteractionComponent>(TEXT("InteractionComponent"));
+	InventoryComponent = CreateDefaultSubobject<USInventoryComponent>(TEXT("InventoryComponent"));
 
 	//Add Spring Arm for Camera
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
@@ -100,6 +102,12 @@ void ASCharacter::SetIsSprinting(bool IsSprinting) {bIsSprinting = IsSprinting;}
 float ASCharacter::GetSprintSpeedModifier() {return SprintSpeedMuliplyer;}
 
 float ASCharacter::GetDefaultWalkSpeed() {return DefaultWalkSpeed;}
+
+USInventoryComponent* ASCharacter::GetInventoryComponent() {return InventoryComponent;}
+
+USStaminaComponent* ASCharacter::GetStaminaComponent(){return StaminaComponent;}
+
+float ASCharacter::GetMinStaminaToSprint() {return MinStamToSprint;}
 
 // ------------- Movement -------------
 
@@ -252,6 +260,9 @@ void ASCharacter::TriggerInteract()
 
 void ASCharacter::Interact(ASBaseInteractable* Interactable)
 {
+	
+	if (Interactable == nullptr) { return; }
+
 	//If no interactable in view, don't do anything
 	if (GetLocalRole() < ROLE_Authority)
 	{
@@ -260,6 +271,8 @@ void ASCharacter::Interact(ASBaseInteractable* Interactable)
 	else
 	{
 		UE_LOG(LogDevelopment, Log, TEXT("Player called interact"))
+
+			if (Interactable == nullptr) { return; }
 			Interactable->OnInteract(this);
 	}
 
