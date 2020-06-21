@@ -80,6 +80,9 @@ void USInventoryComponent::AddItem(FItemData Item, bool& bItemAdded, int32& Item
 
 			bItemAdded = true;
 			ItemID = NewKey;
+
+			//Update Server
+			UpdateUI.Broadcast();
 		}
 
 
@@ -113,6 +116,9 @@ bool  USInventoryComponent::RemoveItem(int32 ItemKey)
 			Inventory_ItemKeys.RemoveAt(Index);
 			Inventory_ItemNames.RemoveAt(Index);
 			Inventory_ItemData.RemoveAt(Index);
+
+			//Update Server
+			UpdateUI.Broadcast();
 		
 			return true;
 

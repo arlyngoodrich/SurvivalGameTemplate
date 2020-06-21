@@ -116,7 +116,10 @@ float ASCharacter::GetMinStaminaToSprint() {return MinStamToSprint;}
 
 void ASCharacter::InteruptSprint()
 {
-	EndSprint();
+	if (bIsSprinting)
+	{
+		EndSprint();
+	}
 }
 
 
