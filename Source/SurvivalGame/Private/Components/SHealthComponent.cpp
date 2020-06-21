@@ -45,6 +45,7 @@ void USHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(USHealthComponent, CurrentHealth);
+	DOREPLIFETIME(USHealthComponent, MaxHealth);
 }
 
 

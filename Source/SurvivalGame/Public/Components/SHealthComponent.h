@@ -44,7 +44,7 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_HealthChanged, BlueprintReadOnly, Category = "Health")
 	float CurrentHealth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Health")
 	float MaxHealth;
 
 	UFUNCTION()

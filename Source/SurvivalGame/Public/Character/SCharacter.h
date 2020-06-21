@@ -13,7 +13,6 @@ class USStaminaComponent;
 class USPlayerInteractionComponent;
 class ASBaseInteractable;
 class USInventoryComponent;
-class UItem;
 class USHungerComponent;
 
 UCLASS()
