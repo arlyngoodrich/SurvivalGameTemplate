@@ -52,11 +52,12 @@ int32 USInventoryComponent::GetNewKey()
 	int32 NewItemKey;
 
 	NewItemKey = LastItemKey + 1;
+	LastItemKey = NewItemKey;
 
 	return NewItemKey;
 }
 
-void USInventoryComponent::AddItem(FItemData Item, bool& bItemAdded, int32& ItemID)
+void USInventoryComponent::AddItem(FItemData Item, bool& bItemAdded)
 {
 	if (MaxWeight >= CurrentWeight + Item.ItemWeight)
 	{
@@ -65,7 +66,6 @@ void USInventoryComponent::AddItem(FItemData Item, bool& bItemAdded, int32& Item
 		{
 			Server_AddItem(Item);
 			bItemAdded = true;
-			ItemID = GetNewKey();
 
 		}
 		else
@@ -79,7 +79,6 @@ void USInventoryComponent::AddItem(FItemData Item, bool& bItemAdded, int32& Item
 			CurrentWeight = CurrentWeight + Item.ItemWeight;
 
 			bItemAdded = true;
-			ItemID = NewKey;
 
 			//Update Server
 			UpdateUI.Broadcast();
@@ -140,9 +139,8 @@ bool USInventoryComponent::Server_AddItem_Validate(FItemData Item)
 void USInventoryComponent::Server_AddItem_Implementation(FItemData Item)
 {
 	bool bItemAdded;
-	int32 ItemID;
 
-	AddItem(Item, bItemAdded, ItemID);
+	AddItem(Item, bItemAdded);
 }
 
 bool USInventoryComponent::Server_RemoveItem_Validate(int32 ItemID)

@@ -20,7 +20,7 @@ public:
 	USInventoryComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void AddItem(FItemData Item, bool& bItemAdded, int32& ItemID);
+	void AddItem(FItemData Item, bool& bItemAdded);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool RemoveItem(int32 ItemID);

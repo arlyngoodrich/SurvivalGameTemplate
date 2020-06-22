@@ -69,7 +69,7 @@ void USHungerComponent::DrainHunger()
 void USHungerComponent::IncreaseHunger(float Amount)
 {
 
-	if (GetOwnerRole() > ROLE_Authority)
+	if (GetOwnerRole() < ROLE_Authority)
 	{
 		Server_IncreaseHunger(Amount);
 	}
@@ -84,25 +84,22 @@ void USHungerComponent::IncreaseHunger(float Amount)
 void USHungerComponent::DecreaseHunger(float Amount)
 {
 
-	if (GetOwnerRole() > ROLE_Authority)
+	if (GetOwnerRole() < ROLE_Authority)
 	{
-		Server_DecreaseHunger(Amount);
+		if (!GetOwner()->HasLocalNetOwner()) { return; }
+		Server_DecreaseHunger(Amount);	
 	}
 	else
 	{
 		CurrentHunger = FMath::Clamp(CurrentHunger - Amount, 0.f, MaxHunger);
-		UE_LOG(LogDevelopment, Log, TEXT("New hunger: %s"), *FString::SanitizeFloat(CurrentHunger));
-		
+		//UE_LOG(LogDevelopment, Log, TEXT("New hunger: %s"), *FString::SanitizeFloat(CurrentHunger));
 
 		if (CurrentHunger <= StarvingThreshold)
 		{
 			StartStarvingDamange();
 		}
 
-
 	}
-
-
 
 }
 
